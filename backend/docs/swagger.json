@@ -1,0 +1,313 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Backend em Go utilizando Clean Code para gestão de figurinhas do álbum.",
+        "title": "API Figurinhas Copa 2026",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/figurinhas": {
+            "get": {
+                "description": "Retorna todas as figurinhas cadastradas com filtros opcionais de posição e tipo",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "figurinhas"
+                ],
+                "summary": "Listar figurinhas",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filtrar por posição",
+                        "name": "posicao",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filtrar por tipo (comum|brilhante|legends_ouro|legends_bronze)",
+                        "name": "tipo",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Figurinha"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Registra uma nova figurinha no álbum da copa",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "figurinhas"
+                ],
+                "summary": "Criar figurinha",
+                "parameters": [
+                    {
+                        "description": "Dados da figurinha",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.CreateFigurinhaRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Figurinha"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/figurinhas/{id}": {
+            "get": {
+                "description": "Retorna os detalhes de uma figurinha pelo ID numérico",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "figurinhas"
+                ],
+                "summary": "Buscar figurinha",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da figurinha",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Figurinha"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Remove em definitivo uma figurinha através do seu ID",
+                "tags": [
+                    "figurinhas"
+                ],
+                "summary": "Deletar figurinha",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da figurinha",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Atualiza parcialmente uma figurinha (PATCH)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "figurinhas"
+                ],
+                "summary": "Atualizar figurinha",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da figurinha",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Campos a modificar",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.UpdateFigurinhaRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Figurinha"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "domain.CreateFigurinhaRequest": {
+            "type": "object",
+            "required": [
+                "numero",
+                "posicao",
+                "tipo"
+            ],
+            "properties": {
+                "numero": {
+                    "type": "string"
+                },
+                "posicao": {
+                    "type": "string"
+                },
+                "tipo": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.Figurinha": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "numero": {
+                    "type": "string"
+                },
+                "posicao": {
+                    "$ref": "#/definitions/domain.FigurinhaPosicao"
+                },
+                "tipo": {
+                    "$ref": "#/definitions/domain.FigurinhaTipo"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.FigurinhaPosicao": {
+            "type": "string",
+            "enum": [
+                "Goleiro",
+                "Zagueiro",
+                "Meio-campista",
+                "Atacante"
+            ],
+            "x-enum-varnames": [
+                "PosicaoGoleiro",
+                "PosicaoZagueiro",
+                "PosicaoMeioCampista",
+                "PosicaoAtacante"
+            ]
+        },
+        "domain.FigurinhaTipo": {
+            "type": "string",
+            "enum": [
+                "comum",
+                "brilhante",
+                "legends_ouro",
+                "legends_bronze"
+            ],
+            "x-enum-varnames": [
+                "TipoComum",
+                "TipoBrilhante",
+                "TipoLegendsOuro",
+                "TipoLegendsBronze"
+            ]
+        },
+        "domain.UpdateFigurinhaRequest": {
+            "type": "object",
+            "properties": {
+                "numero": {
+                    "type": "string"
+                },
+                "posicao": {
+                    "type": "string"
+                },
+                "tipo": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

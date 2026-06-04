@@ -1,0 +1,212 @@
+basePath: /api/v1
+definitions:
+  domain.CreateFigurinhaRequest:
+    properties:
+      numero:
+        type: string
+      posicao:
+        type: string
+      tipo:
+        type: string
+    required:
+    - numero
+    - posicao
+    - tipo
+    type: object
+  domain.Figurinha:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      numero:
+        type: string
+      posicao:
+        $ref: '#/definitions/domain.FigurinhaPosicao'
+      tipo:
+        $ref: '#/definitions/domain.FigurinhaTipo'
+      updated_at:
+        type: string
+    type: object
+  domain.FigurinhaPosicao:
+    enum:
+    - Goleiro
+    - Zagueiro
+    - Meio-campista
+    - Atacante
+    type: string
+    x-enum-varnames:
+    - PosicaoGoleiro
+    - PosicaoZagueiro
+    - PosicaoMeioCampista
+    - PosicaoAtacante
+  domain.FigurinhaTipo:
+    enum:
+    - comum
+    - brilhante
+    - legends_ouro
+    - legends_bronze
+    type: string
+    x-enum-varnames:
+    - TipoComum
+    - TipoBrilhante
+    - TipoLegendsOuro
+    - TipoLegendsBronze
+  domain.UpdateFigurinhaRequest:
+    properties:
+      numero:
+        type: string
+      posicao:
+        type: string
+      tipo:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Backend em Go utilizando Clean Code para gestão de figurinhas do álbum.
+  title: API Figurinhas Copa 2026
+  version: "1.0"
+paths:
+  /figurinhas:
+    get:
+      description: Retorna todas as figurinhas cadastradas com filtros opcionais de
+        posição e tipo
+      parameters:
+      - description: Filtrar por posição
+        in: query
+        name: posicao
+        type: string
+      - description: Filtrar por tipo (comum|brilhante|legends_ouro|legends_bronze)
+        in: query
+        name: tipo
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Figurinha'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Listar figurinhas
+      tags:
+      - figurinhas
+    post:
+      consumes:
+      - application/json
+      description: Registra uma nova figurinha no álbum da copa
+      parameters:
+      - description: Dados da figurinha
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CreateFigurinhaRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Figurinha'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Criar figurinha
+      tags:
+      - figurinhas
+  /figurinhas/{id}:
+    delete:
+      description: Remove em definitivo uma figurinha através do seu ID
+      parameters:
+      - description: ID da figurinha
+        in: path
+        name: id
+        required: true
+        type: integer
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Deletar figurinha
+      tags:
+      - figurinhas
+    get:
+      description: Retorna os detalhes de uma figurinha pelo ID numérico
+      parameters:
+      - description: ID da figurinha
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Figurinha'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Buscar figurinha
+      tags:
+      - figurinhas
+    patch:
+      consumes:
+      - application/json
+      description: Atualiza parcialmente uma figurinha (PATCH)
+      parameters:
+      - description: ID da figurinha
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Campos a modificar
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UpdateFigurinhaRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Figurinha'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Atualizar figurinha
+      tags:
+      - figurinhas
+swagger: "2.0"

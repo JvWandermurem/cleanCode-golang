@@ -6,20 +6,31 @@ import (
 
 )
 
-// Interações com o Banco de dados com o ORM
+//Interface do repository para acessor o DB
+type FigurinhaRepository interface {
+	Create(figurinha *domain.Figurinha) error
+	FindAll(posicao, tipo string) ([]domain.Figurinha, error)
+	FindByID(id uint) (*domain.Figurinha, error)
+	Update(figurinha *domain.Figurinha) error
+	Delete(id uint) error
+}
 
+// Interações com o Banco de dados com o ORM 
 type figurinhaRepositoryImpl struct {
 	db *gorm.DB
 }
 
-func NewFigurinhaRepository(db *gorm.DB) domain.FigurinhaRepository {
+func NewFigurinhaRepository(db *gorm.DB) FigurinhaRepository {
 	return &figurinhaRepositoryImpl{db: db}
 }
+
+// Funções Repository definidas no  /domain
 
 func (r *figurinhaRepositoryImpl) Create(figurinha *domain.Figurinha) error {
 	return r.db.Create(figurinha).Error
 }
 
+//func (Receiver-("Dono do método"))(Parâmetros de entrada)(variáveis de Saída) - estranhesas do golang =0
 func (r *figurinhaRepositoryImpl) FindAll(posicao, tipo string) ([]domain.Figurinha, error) {
 	var figurinhas []domain.Figurinha
 	query := r.db.Model(&domain.Figurinha{})
@@ -35,7 +46,7 @@ func (r *figurinhaRepositoryImpl) FindAll(posicao, tipo string) ([]domain.Figuri
 	return figurinhas, err
 }
 
-func (r *figurinhaRepositoryImpl) FindByID(id int) (*domain.Figurinha, error) {
+func (r *figurinhaRepositoryImpl) FindByID(id uint) (*domain.Figurinha, error) {
 	var figurinha domain.Figurinha
 	err := r.db.First(&figurinha, id).Error
 	if err != nil {
@@ -44,10 +55,10 @@ func (r *figurinhaRepositoryImpl) FindByID(id int) (*domain.Figurinha, error) {
 	return &figurinha, nil
 }
 
-func (r *figurinhaRepositoryImpl) Update(id int, figurinha *domain.Figurinha) error {
+func (r *figurinhaRepositoryImpl) Update( figurinha *domain.Figurinha) error {
 	return r.db.Save(figurinha).Error
 }
 
-func (r *figurinhaRepositoryImpl) Delete(id int) error {
+func (r *figurinhaRepositoryImpl) Delete(id uint) error {
 	return r.db.Delete(&domain.Figurinha{}, id).Error
 }
